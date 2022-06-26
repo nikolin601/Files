@@ -11,13 +11,16 @@ using Files.Uwp.UserControls;
 using Files.Uwp.UserControls.MultitaskingControl;
 using Files.Uwp.ViewModels;
 using Microsoft.Toolkit.Uwp;
+using Microsoft.Toolkit.Uwp.Helpers;
 using Microsoft.Toolkit.Uwp.UI.Controls;
 using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
+using Windows.ApplicationModel;
 using Windows.ApplicationModel.Core;
 using Windows.ApplicationModel.Resources.Core;
+using Windows.Services.Store;
 using Windows.Storage;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
@@ -75,7 +78,35 @@ namespace Files.Uwp.Views
             ToggleCompactOverlayCommand = new RelayCommand(ToggleCompactOverlay);
             SetCompactOverlayCommand = new RelayCommand<bool>(SetCompactOverlay);
 
+            if (SystemInformation.Instance.TotalLaunchCount >= 10 & Package.Current.Id.Name == "49306atecsolution.FilesUWP")
+            {
+                PromptForReview();
+            }
+
             UserSettingsService.OnSettingChangedEvent += UserSettingsService_OnSettingChangedEvent;
+        }
+
+        private async void PromptForReview()
+        {
+            var AskForReviewDialog = new ContentDialog
+            {
+                Title = "Review Files",
+                Content = "Would you like to review Files?",
+                PrimaryButtonText = "Yes",
+                SecondaryButtonText = "No"
+            };
+
+            var result = await AskForReviewDialog.ShowAsync();
+
+            if (result == ContentDialogResult.Primary)
+            {
+                try
+                {
+                    var storeContext = StoreContext.GetDefault();
+                    await storeContext.RequestRateAndReviewAppAsync();
+                }
+                catch (Exception) { }
+            }
         }
 
         private void UserSettingsService_OnSettingChangedEvent(object sender, SettingChangedEventArgs e)
