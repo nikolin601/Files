@@ -27,6 +27,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Navigation;
+using Files.Backend.Extensions;
 
 namespace Files.Uwp.Views
 {
@@ -91,11 +92,11 @@ namespace Files.Uwp.Views
         {
             var AskForReviewDialog = new ContentDialog
             {
-                Title = "Review Files",
-                Content = "Would you like to review Files?",
-                PrimaryButtonText = "Yes",
-                SecondaryButtonText = "No"
-            };
+                Title = "ReviewFiles".ToLocalized(),
+                Content = "ReviewFilesContent".ToLocalized(),
+                PrimaryButtonText = "Yes".ToLocalized(),
+                SecondaryButtonText = "No".ToLocalized()
+        };
 
             var result = await AskForReviewDialog.ShowAsync();
 
